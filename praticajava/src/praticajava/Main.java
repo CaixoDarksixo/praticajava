@@ -84,8 +84,8 @@ public void initFrame() {
 	frame.setLocationRelativeTo(null);
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setVisible(true);
-	
-	Sound.startup.play();
+	Sound.startup.loop(0);
+
 	
 }
 
@@ -106,7 +106,6 @@ try {
 }
 
 public void tick() {
-	Sound.startup.play();
 	
 	
 }
