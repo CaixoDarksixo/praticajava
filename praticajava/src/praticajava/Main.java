@@ -4,7 +4,10 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -14,34 +17,40 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
-import praticajava.Spritesheet;
-import praticajava.Sound;
-
-@SuppressWarnings("unused")
 public class Main extends Canvas implements Runnable, KeyListener, MouseListener {
 	
 private static final long serialVersionUID = 1L;
 public static JFrame frame;
 private Thread thread;
 private boolean isRunning = true;
-public static final int WIDTH = 1200;
-public static int HEIGHT = 800;
+public static final int WIDTH = 1080;
+public static int HEIGHT = 560;
 public final static int SCALE = 1;
+
+public double fwToWidth;
+public double fhToHeight;
 
 private BufferedImage image;
 
-public static int fh = (int)(Toolkit.getDefaultToolkit().getScreenSize().height * 0.8), fw = (int)( Toolkit.getDefaultToolkit().getScreenSize().height * 1);
+public static int fh = (int)(Toolkit.getDefaultToolkit().getScreenSize().height * 0.56), fw = (int)( Toolkit.getDefaultToolkit().getScreenSize().height * 1.08);
 
 public static Spritesheet backgroundspritesheet;
-private BufferedImage background = null;
+public static Spritesheet spritesheet;
+
+Background bg;
+public static List<Cell> cells;
+public static List<LevelCircle> levelscircles;
+public static List<Skill> skills;
 
 public Main(){
 	addKeyListener(this);
@@ -50,19 +59,31 @@ public Main(){
 	this.setPreferredSize(new Dimension(fw,fh));
 	initFrame();
 	image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
+	
+	fwToWidth = (double)WIDTH/(double)fw;
+	fhToHeight = (double)HEIGHT/(double)fh;
+	System.out.println("Proporção X: "+fwToWidth);
+	System.out.println("Proporção Y: "+fhToHeight);
 
 	backgroundspritesheet = new Spritesheet("/background.png");
-	background = backgroundspritesheet.getSprite(0, 0, 1200, 800);
-			//(getClass().getResource("/background.png"));
+	spritesheet = new Spritesheet("/cells.png");
 	
+	bg = new Background(0,0,WIDTH,HEIGHT,null);
+	
+	cells = new ArrayList<Cell>();
+	levelscircles = new ArrayList<LevelCircle>();
+	skills = new ArrayList<Skill>();
+	
+	Skill teste = new Skill(50,150,"Pixel Art",0);
+	Main.skills.add(teste);
 	
 }
 
 public void initFrame() {
 	requestFocus();
-	frame = new JFrame("Programa Teste");
+	frame = new JFrame("Progress Manager");
 	frame.add(this);
-	frame.setResizable(true);
+	frame.setResizable(false);
 	frame.pack();
 	frame.getWidth();
 	frame.getHeight();
@@ -85,6 +106,8 @@ public void initFrame() {
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setVisible(true);
 	Sound.startup.loop(0);
+	
+	 usingCustomFonts();
 
 	
 }
@@ -106,8 +129,13 @@ try {
 }
 
 public void tick() {
-	
-	
+	bg.tick();
+	for(int i = 0; i < cells.size(); i++) {
+		cells.get(i).tick();
+	}
+	for(int i = 0; i < levelscircles.size(); i++) {
+		levelscircles.get(i).tick();
+	}
 }
 
 public void render() {
@@ -121,8 +149,20 @@ public void render() {
 	g.fillRect(0, 0,WIDTH,HEIGHT);
 	
 	//background
+	bg.render(g);
 	
-	g.drawImage(background,0,0, frame);
+	//cells
+	for(int i = 0; i < skills.size(); i++) {
+		skills.get(i).render(g);
+	}
+	
+	for(int i = 0; i < cells.size(); i++) {
+		cells.get(i).render(g);
+	}
+	for(int i = 0; i < levelscircles.size(); i++) {
+		levelscircles.get(i).render(g);
+	}
+	
 	/***/
 	g.dispose();
 	
@@ -130,7 +170,7 @@ public void render() {
 
 	
 	bs.show();
-	g.drawImage(image, 0, 0,fw,fh,null);
+	g.drawImage(image, 0, 0,frame.getWidth(),frame.getHeight(),null);
 	//aqui se digita o que tu não quer que seja pixelado
 
 	
@@ -181,6 +221,48 @@ if(System.currentTimeMillis() - timer >= 1000) {
 stop();
 }
 
+// from baeldung.com
+void usingCustomFonts() {
+    GraphicsEnvironment GE = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    List<String> AVAILABLE_FONT_FAMILY_NAMES = Arrays.asList(GE.getAvailableFontFamilyNames());
+    try {
+        List<File> LIST = Arrays.asList(
+          new File("/font.ttf"), // Pixeloid Sans
+          new File("/font2.ttf"), // Pixeloid Mono
+          new File("/font3.ttf")
+        );
+        for (File LIST_ITEM : LIST) {
+            if (LIST_ITEM.exists()) {
+                Font FONT = Font.createFont(Font.TRUETYPE_FONT, LIST_ITEM);
+                if (!AVAILABLE_FONT_FAMILY_NAMES.contains(FONT.getFontName())) {
+                    GE.registerFont(FONT);
+                    System.out.println(FONT.getFontName());
+                }
+            }
+        }
+    } catch (FontFormatException | IOException exception) {
+        JOptionPane.showMessageDialog(null, exception.getMessage());
+    }
+}
+
+public boolean isColliding(double x1, double y1, Cell cl) {
+	
+	if(x1 >= cl.getX() && x1 <= cl.getX()+cl.getWidth() && y1 >= cl.getY() && y1 <= cl.getY()+cl.getHeight()) {
+		return true;
+	}
+	
+	return false;
+}
+
+public boolean isCollidingLevel(double x1, double y1, LevelCircle cl) {
+	
+	if(x1 >= cl.getX() && x1 <= cl.getX()+cl.getWidth() && y1 >= cl.getY() && y1 <= cl.getY()+cl.getHeight()) {
+		return true;
+	}
+	
+	return false;
+}
+
 @Override
 public void mouseClicked(MouseEvent e) {
 	// TODO Auto-generated method stub
@@ -190,7 +272,24 @@ public void mouseClicked(MouseEvent e) {
 @Override
 public void mousePressed(MouseEvent e) {
 	// TODO Auto-generated method stub
-	
+	double mousex = (e.getX()*fwToWidth);
+	double mousey = (e.getY()*fhToHeight);
+	System.out.println(mousex);
+	System.out.println(mousey);
+	//Muda a célula
+	for(int i = 0; i < cells.size(); i++) {
+		if(isColliding(mousex,mousey, cells.get(i))){
+			cells.get(i).changeIndex(e);
+			System.out.println("clicou na célula");
+		}
+	}
+	//altera o level
+	for(int i = 0; i < levelscircles.size(); i++) {
+		if(isCollidingLevel(mousex,mousey, levelscircles.get(i))){
+			levelscircles.get(i).changeLevel(e);
+			System.out.println("clicou no level");
+		}
+	}
 }
 
 @Override
