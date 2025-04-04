@@ -15,6 +15,8 @@ public class Cell {
 	public String skill;
 	public int order;
 	
+	boolean deleted = false;
+	
 	public Cell(int x, int y, String skill, int order) {
 		cellframe = new BufferedImage[3];
 		cellframe[0] = Main.spritesheet.getSprite(0, 0, 12*1, 30*1);
@@ -31,11 +33,12 @@ public class Cell {
 	}
 	
 	public void tick() {
-		
+		if(deleted)
+		Main.cells.remove(this);
 	}
 
 	public void render(Graphics g) {
-		g.drawImage(cellframe[index],x,y,null);
+		g.drawImage(cellframe[index],x,y-(int)Main.cameray,null);
 	}
 	
 	public int getX() {

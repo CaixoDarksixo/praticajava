@@ -37,6 +37,8 @@ public static final int WIDTH = 1080;
 public static int HEIGHT = 560;
 public final static int SCALE = 1;
 
+public static double cameray = 0;
+
 public double fwToWidth;
 public double fhToHeight;
 
@@ -51,6 +53,7 @@ Background bg;
 public static List<Cell> cells;
 public static List<LevelCircle> levelscircles;
 public static List<Skill> skills;
+public static List<Button> buttons;
 
 public Main(){
 	addKeyListener(this);
@@ -73,9 +76,13 @@ public Main(){
 	cells = new ArrayList<Cell>();
 	levelscircles = new ArrayList<LevelCircle>();
 	skills = new ArrayList<Skill>();
+	buttons = new ArrayList<Button>();
 	
-	Skill teste = new Skill(50,150,"Pixel Art",0);
-	Main.skills.add(teste);
+	//Skill skill = new Skill(50,150+skills.size()*50, JOptionPane.showInputDialog(frame, "Nome da habilidade"),0);
+	//Main.skills.add(skill);
+	
+	Button createskill = new Button(130, 100, 108, 20, "CreateSkill", "");
+	Main.buttons.add(createskill);
 	
 }
 
@@ -108,6 +115,8 @@ public void initFrame() {
 	Sound.startup.loop(0);
 	
 	 usingCustomFonts();
+	 
+	
 
 	
 }
@@ -136,6 +145,9 @@ public void tick() {
 	for(int i = 0; i < levelscircles.size(); i++) {
 		levelscircles.get(i).tick();
 	}
+	for(int i = 0; i < buttons.size(); i++) {
+		buttons.get(i).tick();
+	}
 }
 
 public void render() {
@@ -161,6 +173,9 @@ public void render() {
 	}
 	for(int i = 0; i < levelscircles.size(); i++) {
 		levelscircles.get(i).render(g);
+	}
+	for(int i = 0; i < buttons.size(); i++) {
+		buttons.get(i).render(g);
 	}
 	
 	/***/
@@ -247,7 +262,7 @@ void usingCustomFonts() {
 
 public boolean isColliding(double x1, double y1, Cell cl) {
 	
-	if(x1 >= cl.getX() && x1 <= cl.getX()+cl.getWidth() && y1 >= cl.getY() && y1 <= cl.getY()+cl.getHeight()) {
+	if(x1 >= cl.getX() && x1 <= cl.getX()+cl.getWidth() && y1 >= cl.getY() && y1 <= cl.getY()+cl.getHeight()+5) {
 		return true;
 	}
 	
@@ -256,7 +271,15 @@ public boolean isColliding(double x1, double y1, Cell cl) {
 
 public boolean isCollidingLevel(double x1, double y1, LevelCircle cl) {
 	
-	if(x1 >= cl.getX() && x1 <= cl.getX()+cl.getWidth() && y1 >= cl.getY() && y1 <= cl.getY()+cl.getHeight()) {
+	if(x1 >= cl.getX() && x1 <= cl.getX()+cl.getWidth() && y1 >= cl.getY() && y1 <= cl.getY()+cl.getHeight()+5) {
+		return true;
+	}
+	
+	return false;
+}
+public boolean isCollidingButton(double x1, double y1, Button cl) {
+	
+	if(x1 >= cl.getX() && x1 <= cl.getX()+cl.getWidth() && y1 >= cl.getY() && y1 <= cl.getY()+cl.getHeight()+5) {
 		return true;
 	}
 	
@@ -273,7 +296,7 @@ public void mouseClicked(MouseEvent e) {
 public void mousePressed(MouseEvent e) {
 	// TODO Auto-generated method stub
 	double mousex = (e.getX()*fwToWidth);
-	double mousey = (e.getY()*fhToHeight);
+	double mousey = (e.getY()*fhToHeight)+Main.cameray;
 	System.out.println(mousex);
 	System.out.println(mousey);
 	//Muda a célula
@@ -288,6 +311,13 @@ public void mousePressed(MouseEvent e) {
 		if(isCollidingLevel(mousex,mousey, levelscircles.get(i))){
 			levelscircles.get(i).changeLevel(e);
 			System.out.println("clicou no level");
+		}
+	}
+	//clica em um botão
+	for(int i = 0; i < buttons.size(); i++) {
+		if(isCollidingButton(mousex,mousey, buttons.get(i))){
+			buttons.get(i).execute();
+			System.out.println("clicou no botão");
 		}
 	}
 }
@@ -319,7 +349,14 @@ public void keyTyped(KeyEvent e) {
 @Override
 public void keyPressed(KeyEvent e) {
 	// TODO Auto-generated method stub
-	
+	if(e.getKeyCode() == KeyEvent.VK_UP ||
+			e.getKeyCode() == KeyEvent.VK_W) {
+		cameray-=5;
+	}
+	if(e.getKeyCode() == KeyEvent.VK_DOWN ||
+			e.getKeyCode() == KeyEvent.VK_S) {
+		cameray+=5;
+	}
 }
 
 @Override

@@ -57,31 +57,19 @@ public class LevelCircle {
 	}
 
 	public void render(Graphics g) {
-		g.drawImage(Sprite,x,y,null);
+		g.drawImage(Sprite,x,y-(int)Main.cameray,null);
 		g.setFont(new Font("arial", Font.BOLD,25));
 		g.setColor(Color.WHITE);
 		if(level < 10) {
-			g.drawString(""+level, x+10,y+27);
-			g.drawString(""+level, x+10,y+27);
-			g.drawString(""+level, x+10,y+27);
-			g.drawString(""+level, x+10,y+27);
+			g.drawString(""+level, x+10,y+27-(int)Main.cameray);
 		}else {
-			g.drawString(""+level, x+4,y+27);
-			g.drawString(""+level, x+4,y+27);
-			g.drawString(""+level, x+4,y+27);
-			g.drawString(""+level, x+4,y+27);
+			g.drawString(""+level, x+4,y+27-(int)Main.cameray);
 		}
 		g.setColor(Color.BLACK);
 		if(level < 10) {
-			g.drawString(""+level, x+12,y+26);
-			g.drawString(""+level, x+12,y+26);
-			g.drawString(""+level, x+12,y+26);
-			g.drawString(""+level, x+12,y+26);
+			g.drawString(""+level, x+12,y+26-(int)Main.cameray);
 		}else {
-			g.drawString(""+level, x+5,y+26);
-			g.drawString(""+level, x+5,y+26);
-			g.drawString(""+level, x+5,y+26);
-			g.drawString(""+level, x+5,y+26);
+			g.drawString(""+level, x+5,y+26-(int)Main.cameray);
 		}
 	}
 }

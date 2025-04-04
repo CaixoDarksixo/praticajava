@@ -40,11 +40,11 @@ public class Background {
 
 	public void render(Graphics g) {
 		g.drawImage(background[index],0,0,Main.WIDTH,Main.HEIGHT,null);
-		g.drawImage(portrait,10,10,null);
+		g.drawImage(portrait,10,10-(int)Main.cameray,null);
 		g.setFont(new Font("Pixeloid Mono", Font.BOLD,25));
 		g.setColor(Color.WHITE);
-		g.drawString("Progressão de Personagem: João Pedro Nossol", 120,52);
+		g.drawString("Progressão de Personagem: João Pedro Nossol", 120,(int)(52-Main.cameray));
 		g.setColor(Color.BLACK);
-		g.drawString("Progressão de Personagem: João Pedro Nossol", 122,50);
+		g.drawString("Progressão de Personagem: João Pedro Nossol", 122,(int)(50-Main.cameray));
 	}
 }
