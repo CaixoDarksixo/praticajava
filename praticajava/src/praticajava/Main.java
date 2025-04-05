@@ -48,8 +48,9 @@ public static int fh = (int)(Toolkit.getDefaultToolkit().getScreenSize().height 
 
 public static Spritesheet backgroundspritesheet;
 public static Spritesheet spritesheet;
+public static Spritesheet spritesheetpfp;
 
-Background bg;
+static Background bg;
 public static List<Cell> cells;
 public static List<LevelCircle> levelscircles;
 public static List<Skill> skills;
@@ -70,6 +71,7 @@ public Main(){
 
 	backgroundspritesheet = new Spritesheet("/background.png");
 	spritesheet = new Spritesheet("/cells.png");
+	spritesheetpfp = new Spritesheet("/spritescaixos.png");
 	
 	bg = new Background(0,0,WIDTH,HEIGHT,null);
 	
@@ -81,9 +83,15 @@ public Main(){
 	//Skill skill = new Skill(50,150+skills.size()*50, JOptionPane.showInputDialog(frame, "Nome da habilidade"),0);
 	//Main.skills.add(skill);
 	
-	Button createskill = new Button(130, 100, 108, 20, "CreateSkill", "");
+	Button createskill = new Button(6, 110, 108, 20, "CreateSkill", "");
 	Main.buttons.add(createskill);
 	
+	Button changepfp = new Button(10, 0, 16, 16, "ChangePfpPlus", "");
+	Main.buttons.add(changepfp);
+	Button changepfp2 = new Button(26, 0, 16, 16, "ChangePfpMinus", "");
+	Main.buttons.add(changepfp2);
+	
+	Save.applySave(Save.loadSave());
 }
 
 public void initFrame() {
@@ -148,6 +156,9 @@ public void tick() {
 	for(int i = 0; i < buttons.size(); i++) {
 		buttons.get(i).tick();
 	}
+	for(int i = 0; i < skills.size(); i++) {
+		skills.get(i).tick();
+	}
 }
 
 public void render() {
@@ -198,6 +209,7 @@ public static void main(String args[]) {
 
 @Override
 public void run() {
+	
 	// TODO Auto-generated method stub
 	long lastTime = System.nanoTime();
 	double amountOfTicks = 60.0;
@@ -205,16 +217,13 @@ public void run() {
     double delta = 0;
     int frames = 0;
     double timer = System.currentTimeMillis();
+   
 while(isRunning) {
 	long now = System.nanoTime();
 	delta+= (now - lastTime) / ns;
 	lastTime = now;
 	
-	//if(delta <= 0.8 ) {
-		//delta = 1;
-	//}
 	if(delta >= 1) {
-		//System.out.println("delta: "+ delta);
 		
 		tick();
 		render();
@@ -234,6 +243,7 @@ if(System.currentTimeMillis() - timer >= 1000) {
 }
 
 stop();
+
 }
 
 // from baeldung.com
@@ -244,7 +254,8 @@ void usingCustomFonts() {
         List<File> LIST = Arrays.asList(
           new File("/font.ttf"), // Pixeloid Sans
           new File("/font2.ttf"), // Pixeloid Mono
-          new File("/font3.ttf")
+          new File("/font3.ttf"),
+          new File("/font4.otf") // FOT-NewRodin Pro
         );
         for (File LIST_ITEM : LIST) {
             if (LIST_ITEM.exists()) {
@@ -349,13 +360,20 @@ public void keyTyped(KeyEvent e) {
 @Override
 public void keyPressed(KeyEvent e) {
 	// TODO Auto-generated method stub
-	if(e.getKeyCode() == KeyEvent.VK_UP ||
-			e.getKeyCode() == KeyEvent.VK_W) {
-		cameray-=5;
+	if(e.getKeyCode() == KeyEvent.VK_UP) {
+		cameray-=15;
+		
 	}
-	if(e.getKeyCode() == KeyEvent.VK_DOWN ||
-			e.getKeyCode() == KeyEvent.VK_S) {
-		cameray+=5;
+	if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+		cameray+=15;
+		
+	}
+	
+	if(e.getKeyCode() == KeyEvent.VK_S) {
+		Save.SaveNow();
+	}
+	if(e.getKeyCode() == KeyEvent.VK_L) {
+		Save.applySave(Save.loadSave());
 	}
 }
 

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Array;
 
 public class Skill {
 	
@@ -12,10 +13,12 @@ public class Skill {
 	
 	
 	
-	public int x,y,bgindex = 0,maxbgindex = 8;
+	public int x,y,level,bgindex = 0,maxbgindex = 8;
 	public String Skill;
+	
+	int[] CellIndexes;
 
-	public Skill(int x, int y, String skill, int level) {
+	public Skill(String skill, int x, int y, int level, int bgindex, int[] cellindexes) {
 		LevelCircle lv = new LevelCircle(x,y,skill,level);
 		Main.levelscircles.add(lv);
 		
@@ -27,9 +30,15 @@ public class Skill {
 		
 		
 		for(int i = 1; i <= 40; i++) {
-			Cell celltest = new Cell(x+39+11*(i-1),y+2,skill,i);
-			Main.cells.add(celltest);
+			if(Array.getLength(cellindexes) > 1) {
+					Cell cell = new Cell(x+39+11*(i-1),y+2,skill,i,cellindexes[i-1]);
+					Main.cells.add(cell);
+			}else {
+					Cell cell = new Cell(x+39+11*(i-1),y+2,skill,i,0);
+					Main.cells.add(cell);
+			}
 		}
+		
 		
 		Button changebg = new Button(x+39,y+32,16,16,"ChangeBackgroundPlus",skill);
 		Main.buttons.add(changebg);
@@ -41,10 +50,44 @@ public class Skill {
 		this.x = x;
 		this.y = y;
 		this.Skill = skill;
+		this.level = level;
+		this.bgindex = bgindex;
+		CellIndexes = new int[40];
+	}
+	
+	public void tick() {
+		for(int i = 0; i < Main.levelscircles.size(); i++) {
+			if( Main.levelscircles.get(i).getSkill() == Skill )
+				{
+				level = Main.levelscircles.get(i).getLevel();
+				}
+				
+		}
+		for(int i = 0; i < Main.cells.size(); i++) {
+			if( Main.cells.get(i).getSkill() == Skill )
+				{
+				CellIndexes[Main.cells.get(i).getOrder()-1] = Main.cells.get(i).getIndex();
+				}
+		}
 	}
 	
 	public String getSkill() {
 		return Skill;
+	}
+	public int getX() {
+		return x;
+	}
+	public int getY() {
+		return y;
+	}
+	public int getLevel() {
+		return level;
+	}
+	public int getBgIndex() {
+		return bgindex;
+	}
+	public int[] getIndexes() {
+		return CellIndexes;
 	}
 	
 	public void deleteSkill() {
@@ -73,22 +116,23 @@ public class Skill {
 	}
 	
 	public void changeBackground(int change) {
-		bgindex+=change;
-		if(bgindex < 0)
+			if(bgindex+change < 0)
 		bgindex = maxbgindex;
-		if(bgindex > maxbgindex)
+		else if(bgindex+change > maxbgindex)
 		bgindex = 0;
+		else
+		bgindex+=change;
 	}
 	
 	public void render(Graphics g) {
 		g.drawImage(background[bgindex],x,y-(int)Main.cameray,null);
 	
 		//g.setFont(new Font("arial", Font.BOLD,20));
-		g.setFont(new Font("Arial", Font.BOLD,15));
+		g.setFont(new Font("Arial", Font.BOLD,18));
 		g.setColor(Color.WHITE);
-		g.drawString(""+Skill, x+30,y-(int)Main.cameray);
+		g.drawString(""+Skill, x+40,y-(int)Main.cameray);
 		g.setColor(Color.BLACK);
-		g.drawString(""+Skill, x+31,y-(int)Main.cameray);
+		g.drawString(""+Skill, x+41,y-1-(int)Main.cameray);
 	
 	}
 }

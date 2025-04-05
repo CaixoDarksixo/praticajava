@@ -17,7 +17,7 @@ public class Cell {
 	
 	boolean deleted = false;
 	
-	public Cell(int x, int y, String skill, int order) {
+	public Cell(int x, int y, String skill, int order, int index) {
 		cellframe = new BufferedImage[3];
 		cellframe[0] = Main.spritesheet.getSprite(0, 0, 12*1, 30*1);
 		cellframe[1] = Main.spritesheet.getSprite(12*1, 0, 12*1, 30*1);
@@ -29,6 +29,7 @@ public class Cell {
 		this.height = 30;
 		this.skill = skill;
 		this.order = order;
+		this.index = index;
 		
 	}
 	

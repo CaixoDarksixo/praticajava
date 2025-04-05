@@ -74,7 +74,8 @@ public class Button {
 			}
 		break;
 		case "CreateSkill":
-			Skill nskill = new Skill(50,150+Main.skills.size()*70, JOptionPane.showInputDialog(Main.frame, "Nome da habilidade:"),0);
+			int[] none = {0};
+			Skill nskill = new Skill( JOptionPane.showInputDialog(Main.frame, "Nome da habilidade:"),50,150+Main.skills.size()*70,0,0,none);
 			Main.skills.add(nskill);
 		break;
 		case "DeleteSkill":
@@ -88,6 +89,18 @@ public class Button {
 				}
 			}
 				
+		break;
+		case "ChangePfpPlus":
+			if(Main.bg.pfpindex < 19)
+			Main.bg.pfpindex++;
+			else
+			Main.bg.pfpindex = 0;
+		break;
+		case "ChangePfpMinus":
+			if(Main.bg.pfpindex > 0)
+			Main.bg.pfpindex--;
+			else
+			Main.bg.pfpindex = 19;
 		break;
 		}
 	}
@@ -105,6 +118,12 @@ public class Button {
 		break;
 		case "DeleteSkill":
 			g.drawImage(deleteskillbutton,x,y-(int)Main.cameray,null);
+		break;
+		case "ChangePfpPlus":
+			g.drawImage(backgroundbutton[0],x,y-(int)Main.cameray,null);
+		break;
+		case "ChangePfpMinus":
+			g.drawImage(backgroundbutton[1],x,y-(int)Main.cameray,null);
 		break;
 		}
 	}

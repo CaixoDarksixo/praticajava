@@ -40,6 +40,9 @@ public class LevelCircle {
 	public int getHeight() {
 		return height;
 	}
+	public int getLevel() {
+		return level;
+	}
 	
 	public String getSkill() {
 		return skill;

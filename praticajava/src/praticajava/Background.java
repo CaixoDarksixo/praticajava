@@ -7,13 +7,13 @@ import java.awt.image.BufferedImage;
 
 public class Background {
 	private BufferedImage[] background;
-	private BufferedImage portrait;
+	private BufferedImage[] portrait;
 			
 	private int index = 0;
 	private int frames = 0;
 	private int maxframes = 20;
 	
-	
+	public int pfpindex = 0;
 	
 	public Background(int x, int y, int width, int height, BufferedImage sprite) {
 		background = new BufferedImage[4];
@@ -22,7 +22,11 @@ public class Background {
 		background[2] = Main.backgroundspritesheet.getSprite(600*2, 0, 600, 400);
 		background[3] = Main.backgroundspritesheet.getSprite(600*3, 0, 600, 400);
 		
-		portrait = Main.spritesheet.getSprite(72, 0, 100, 100);
+		portrait = new BufferedImage[20];
+		for(int i = 0; i < 10; i++)
+		portrait[i]	= Main.spritesheetpfp.getSprite(i*100, 0, 100, 100);
+		for(int i = 0; i < 10; i++)
+		portrait[10+i]	= Main.spritesheetpfp.getSprite(i*100, 100, 100, 100);
 	}
 	
 	public void tick() {
@@ -40,11 +44,15 @@ public class Background {
 
 	public void render(Graphics g) {
 		g.drawImage(background[index],0,0,Main.WIDTH,Main.HEIGHT,null);
-		g.drawImage(portrait,10,10-(int)Main.cameray,null);
-		g.setFont(new Font("Pixeloid Mono", Font.BOLD,25));
+		g.drawImage(portrait[pfpindex],10,10-(int)Main.cameray,null);
+		
+		g.setColor(Color.WHITE);
+		g.fillRoundRect(115,(int)(10-Main.cameray),900,100,20,10);
+		
+		g.setFont(new Font("FOT-NewRodin Pro", Font.BOLD,30));
 		g.setColor(Color.WHITE);
 		g.drawString("Progressão de Personagem: João Pedro Nossol", 120,(int)(52-Main.cameray));
-		g.setColor(Color.BLACK);
-		g.drawString("Progressão de Personagem: João Pedro Nossol", 122,(int)(50-Main.cameray));
+		g.setColor(Color.getHSBColor((float)(222)/360,(float)0.65,(float)0.8));
+		g.drawString("Progressão de Personagem: João Pedro Nossol", 142,(int)(70-Main.cameray));
 	}
 }
