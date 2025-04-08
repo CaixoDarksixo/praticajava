@@ -47,7 +47,7 @@ public class Save {
 		BufferedWriter write = null;
 		
 		try {
-			write = new BufferedWriter(new FileWriter("/save.txt"));
+			write = new BufferedWriter(new FileWriter("save.txt"));
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -74,11 +74,11 @@ public class Save {
 	
 	public static String loadSave() {
 		String line = "";
-		File file = new File("/save.txt");
+		File file = new File("save.txt");
 		if(file.exists()) {
 			try {
 				String singleLine = null;
-				BufferedReader reader = new BufferedReader(new FileReader("/save.txt"));
+				BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
 				try {
 					while((singleLine = reader.readLine()) != null) {
 						String[] trans = singleLine.split("xhx");
