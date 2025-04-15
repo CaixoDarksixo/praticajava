@@ -37,8 +37,10 @@ public class Cell {
 	}
 	
 	public void tick() {
-		if(deleted)
+		if(deleted){
 		Main.cells.remove(this);
+		System.gc();
+		}
 	}
 
 	public void render(Graphics g) {
