@@ -146,6 +146,9 @@ try {
 }
 
 public void tick() {
+	fwToWidth = (double)WIDTH/(double)frame.getWidth();
+	fhToHeight = (double)HEIGHT/(double)frame.getHeight();
+	
 	bg.tick();
 	for(int i = 0; i < cells.size(); i++) {
 		cells.get(i).tick();
